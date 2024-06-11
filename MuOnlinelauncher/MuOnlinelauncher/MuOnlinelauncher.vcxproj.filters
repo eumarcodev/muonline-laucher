@@ -25,12 +25,12 @@
     <Filter Include="Source Files\LaucherWindow">
       <UniqueIdentifier>{5a3198cb-8722-4f0d-9218-40c144e8d33e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\LaucherWindow">
-      <UniqueIdentifier>{9ca8a7f1-2532-4f0a-99d4-771755b0ef4e}</UniqueIdentifier>
+    <Filter Include="Source Files\Interface">
+      <UniqueIdentifier>{951ba25f-f559-49e8-9785-3b2eabbd006d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MuOnlinelaucher.h">
+    <ClInclude Include="MuOnlinelauncher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -45,15 +45,18 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="LauncherWindow.h">
-      <Filter>Header Files\LaucherWindow</Filter>
-    </ClInclude>
     <ClInclude Include="defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LauncherWindow.h">
+      <Filter>Source Files\LaucherWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Images.h">
+      <Filter>Source Files\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MuOnlinelaucher.cpp">
+    <ClCompile Include="MuOnlinelauncher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -62,9 +65,12 @@
     <ClCompile Include="LauncherWindow.cpp">
       <Filter>Source Files\LaucherWindow</Filter>
     </ClCompile>
+    <ClCompile Include="Images.cpp">
+      <Filter>Source Files\Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MuOnlinelaucher.rc">
+    <ResourceCompile Include="MuOnlinelauncher.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -72,7 +78,10 @@
     <Image Include="small.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="MuOnlinelaucher.ico">
+    <Image Include="MuOnlinelauncher.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\build\x64\Debug\bg_launcher.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
