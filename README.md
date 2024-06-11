@@ -62,6 +62,7 @@ Este projeto tem como objetivo criar um launcher funcional para o jogo MuOnline,
 ## Colaboradores
 
 - [Marco Quadros (eumarcodev)](https://github.com/eumarcodev) - [Usuário no Fórum - marcoquadros](https://perfectzone.com.br/member.php?u=3583)
+- [JanoDesign](https://www.behance.net/janodesign/projects) - [Usuário no Fórum - JanoDesign](https://perfectzone.com.br/member.php?u=3697)
 
 ## Registro de Alterações (Changelog)
 
