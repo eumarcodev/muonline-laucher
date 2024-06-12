@@ -1,3 +1,8 @@
 {
-  "dependencies": ["cryptopp", "fmt"]
+  "dependencies": [
+    "cryptopp",
+    "fmt",
+    "zlib",
+    "libpng"
+  ]
 }

@@ -174,7 +174,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ICryptography.h" />
     <ClInclude Include="Images.h" />
-    <ClInclude Include="LauncherWindow.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="MuOnlinelauncher.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
@@ -183,7 +183,7 @@
   <ItemGroup>
     <ClCompile Include="AESCryptography.cpp" />
     <ClCompile Include="Images.cpp" />
-    <ClCompile Include="LauncherWindow.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MuOnlinelauncher.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
