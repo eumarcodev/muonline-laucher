@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Interface">
       <UniqueIdentifier>{951ba25f-f559-49e8-9785-3b2eabbd006d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Cryptography">
+      <UniqueIdentifier>{23e3397e-d41c-4d61-bfdd-a9db5a68ff8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MuOnlinelauncher.h">
@@ -54,6 +57,12 @@
     <ClInclude Include="Images.h">
       <Filter>Source Files\Interface</Filter>
     </ClInclude>
+    <ClInclude Include="ICryptography.h">
+      <Filter>Source Files\Cryptography</Filter>
+    </ClInclude>
+    <ClInclude Include="AESCryptography.h">
+      <Filter>Source Files\Cryptography</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MuOnlinelauncher.cpp">
@@ -67,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="Images.cpp">
       <Filter>Source Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="AESCryptography.cpp">
+      <Filter>Source Files\Cryptography</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
