@@ -2,6 +2,17 @@
 #include "LauncherWindow.h"
 
 
+const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
+const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
+
+#ifndef GET_X_LPARAM
+#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#endif
+
+#ifndef GET_Y_LPARAM
+#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
+#endif
+
 LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
     : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
 {
@@ -19,7 +30,7 @@ bool LauncherWindow::Create()
     wcex.hInstance = m_hInstance;
     wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = nullptr; 
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcex.lpszMenuName = nullptr;
     wcex.lpszClassName = L"TransparentWindowClass";
     wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
@@ -32,6 +43,8 @@ bool LauncherWindow::Create()
 
     int xPos = 0;
     int yPos = 0;
+    int width = 0;
+    int height = 0;
     if (this->m_images) {
         Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
 
@@ -42,8 +55,8 @@ bool LauncherWindow::Create()
 
             RECT rect;
             GetWindowRect(m_hWnd, &rect);
-            int width = pImage->GetWidth();
-            int height = pImage->GetHeight();
+            width = pImage->GetWidth();
+            height = pImage->GetHeight();
 
 
             xPos = (screenWidth - width) / 2;
@@ -52,7 +65,7 @@ bool LauncherWindow::Create()
     }
 
     m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
-        xPos, yPos, 800, 600, nullptr, nullptr, m_hInstance, this);
+        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
 
     if (!m_hWnd)
     {
@@ -101,12 +114,31 @@ LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     static POINTS ptsBegin;
+    
+    int x, y;
 
     switch (message)
     {
     case WM_LBUTTONDOWN:
         ptsBegin = MAKEPOINTS(lParam);
         SetCapture(m_hWnd);
+
+        x = GET_X_LPARAM(lParam);
+        y = GET_Y_LPARAM(lParam);
+
+        std::cout << "X: " << x << " Y: " << y << std::endl;
+
+        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
+            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
+            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
+        }
+
+        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
+			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
+			PostQuitMessage(0);
+		}
+
+
         std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
         break;
 
@@ -185,6 +217,10 @@ LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam
         EndPaint(m_hWnd, &ps);
     }
     break;
+
+    case WM_ERASEBKGND:
+        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
+        return 1;
 
     case WM_DESTROY:
         PostQuitMessage(0);
