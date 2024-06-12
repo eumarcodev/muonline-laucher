@@ -34,3 +34,8 @@
 // ignore build folder and .vs folder
 MuOnlineLauncher/build/
 MuOnlineLauncher/.vs
+MuOnlinelauncher/Libs/cryptopp/cryptopp/TestData/
+MuOnlinelauncher/Libs/cryptopp/cryptopp/TestPrograms/
+MuOnlinelauncher/Libs/cryptopp/cryptopp/TestVectors/
+MuOnlinelauncher/Libs/cryptopp/cryptopp/Win32/
+MuOnlinelauncher/Libs/cryptopp/cryptopp/x64/
