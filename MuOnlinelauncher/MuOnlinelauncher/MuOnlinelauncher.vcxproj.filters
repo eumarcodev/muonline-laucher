@@ -90,10 +90,10 @@
     <Image Include="small.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="MuOnlinelauncher.ico">
+    <Image Include="pz-icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\build\x64\Debug\bg_launcher.png">
+    <Image Include="..\Data\Interface\Laucher\bg_launcher.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
