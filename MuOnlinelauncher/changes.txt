@@ -1,0 +1,1715 @@
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.cpp b/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.cpp
+index d633954..e8b5373 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.cpp
++++ b/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.cpp
+@@ -1,236 +1,932 @@
++//#include "pch.h"
++//#include "LauncherWindow.h"
++//
++//
++//const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
++//const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
++//
++//
++//
++//LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
++//    : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
++//{
++//}
++//
++//bool LauncherWindow::Create()
++//{
++//    WNDCLASSEXW wcex;
++//    wcex.cbSize = sizeof(WNDCLASSEX);
++//
++//    wcex.style = CS_HREDRAW | CS_VREDRAW;
++//    wcex.lpfnWndProc = LauncherWindow::WndProc;
++//    wcex.cbClsExtra = 0;
++//    wcex.cbWndExtra = 0;
++//    wcex.hInstance = m_hInstance;
++//    wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
++//    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
++//    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
++//    wcex.lpszMenuName = nullptr;
++//    wcex.lpszClassName = L"TransparentWindowClass";
++//    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
++//
++//    if (!RegisterClassExW(&wcex))
++//    {
++//        std::wcerr << L"Failed to register window class" << std::endl;
++//        return false;
++//    }
++//
++//    int xPos = 0;
++//    int yPos = 0;
++//    int width = 0;
++//    int height = 0;
++//    if (this->m_images) {
++//        Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//        if (pImage)
++//        {
++//            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//            width = pImage->GetWidth();
++//            height = pImage->GetHeight();
++//
++//
++//            xPos = (screenWidth - width) / 2;
++//            yPos = (screenHeight - height) / 2;
++//        }
++//    }
++//
++//    m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
++//        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
++//
++//    if (!m_hWnd)
++//    {
++//        std::wcerr << L"Failed to create window" << std::endl;
++//        return false;
++//    }
++//
++//    std::wcerr << L"Window created successfully" << std::endl;
++//
++//    return m_hWnd != nullptr;
++//}
++//
++//HWND LauncherWindow::GetHWnd() const
++//{
++//    return m_hWnd;
++//}
++//
++//LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    LauncherWindow* pThis = nullptr;
++//
++//    if (message == WM_NCCREATE)
++//    {
++//        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
++//        pThis = (LauncherWindow*)pCreate->lpCreateParams;
++//        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
++//
++//        pThis->m_hWnd = hWnd;
++//        std::wcout << L"WM_NCCREATE called" << std::endl;
++//    }
++//    else
++//    {
++//        pThis = (LauncherWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
++//    }
++//
++//    if (pThis)
++//    {
++//        return pThis->HandleMessage(message, wParam, lParam);
++//    }
++//    else
++//    {
++//        return DefWindowProc(hWnd, message, wParam, lParam);
++//    }
++//}
++//
++//LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    static POINTS ptsBegin;
++//    
++//    int x, y;
++//
++//    switch (message)
++//    {
++//    case WM_LBUTTONDOWN:
++//        ptsBegin = MAKEPOINTS(lParam);
++//        SetCapture(m_hWnd);
++//
++//        x = GET_X_LPARAM(lParam);
++//        y = GET_Y_LPARAM(lParam);
++//
++//        std::cout << "X: " << x << " Y: " << y << std::endl;
++//
++//        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
++//            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
++//            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
++//        }
++//
++//        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
++//			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
++//			PostQuitMessage(0);
++//		}
++//
++//
++//        std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
++//        break;
++//
++//    case WM_MOUSEMOVE:
++//        if (wParam & MK_LBUTTON)
++//        {
++//            POINTS ptsEnd = MAKEPOINTS(lParam);
++//
++//            int dx = ptsEnd.x - ptsBegin.x;
++//            int dy = ptsEnd.y - ptsBegin.y;
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//
++//            MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
++//        }
++//        break;
++//
++//    case WM_LBUTTONUP:
++//        ReleaseCapture();
++//        std::wcout << L"WM_LBUTTONUP called" << std::endl;
++//        break;
++//
++//    case WM_PAINT:
++//    {
++//        std::wcout << L"WM_PAINT called" << std::endl;
++//        PAINTSTRUCT ps;
++//        HDC hdc = BeginPaint(m_hWnd, &ps);
++//
++//        Graphics graphics(hdc);
++//
++//        if (this->m_images) {
++//            Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//            if (pImage)
++//            {
++//                int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//                int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//                RECT rect;
++//                GetWindowRect(m_hWnd, &rect);
++//                int width = pImage->GetWidth();
++//                int height = pImage->GetHeight();
++//
++//
++//                int xPos = (screenWidth - width) / 2;
++//                int yPos = (screenHeight - height) / 2;
++//
++//                MoveWindow(m_hWnd, xPos, yPos, width, height, TRUE);
++//
++//                HDC hdcMem = CreateCompatibleDC(hdc);
++//                HBITMAP hBitmap = CreateCompatibleBitmap(hdc, width, height);
++//                SelectObject(hdcMem, hBitmap);
++//
++//                // Configurar o GDI+ para desenhar com transparência
++//                Graphics graphicsMem(hdcMem);
++//                graphicsMem.DrawImage(pImage, 0, 0, width, height);
++//
++//                // Transferir o conteúdo do DC da memória para o DC da janela usando UpdateLayeredWindow
++//                POINT ptSrc = { 0, 0 };
++//                SIZE sizeWnd = { width, height };
++//                BLENDFUNCTION blend = { 0 };
++//                blend.BlendOp = AC_SRC_OVER;
++//                blend.BlendFlags = 0;
++//                blend.SourceConstantAlpha = 255;
++//                blend.AlphaFormat = AC_SRC_ALPHA;
++//
++//                POINT ptPos = { rect.left, rect.top };
++//                UpdateLayeredWindow(m_hWnd, hdc, &ptPos, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
++//
++//                DeleteObject(hBitmap);
++//                DeleteDC(hdcMem);
++//            }
++//        }
++//
++//        EndPaint(m_hWnd, &ps);
++//    }
++//    break;
++//
++//    case WM_ERASEBKGND:
++//        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
++//        return 1;
++//
++//    case WM_DESTROY:
++//        PostQuitMessage(0);
++//        std::wcerr << L"WM_DESTROY called" << std::endl;
++//        break;
++//
++//    default:
++//        return DefWindowProc(m_hWnd, message, wParam, lParam);
++//    }
++//
++//    return 0;
++//}
++//
++//#include "pch.h"
++//#include "LauncherWindow.h"
++//
++//
++//const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
++//const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
++//
++//#ifndef GET_X_LPARAM
++//#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
++//#endif
++//
++//#ifndef GET_Y_LPARAM
++//#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
++//#endif
++//
++//LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
++//    : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
++//{
++//}
++//
++//bool LauncherWindow::Create()
++//{
++//    WNDCLASSEXW wcex;
++//    wcex.cbSize = sizeof(WNDCLASSEX);
++//
++//    wcex.style = CS_HREDRAW | CS_VREDRAW;
++//    wcex.lpfnWndProc = LauncherWindow::WndProc;
++//    wcex.cbClsExtra = 0;
++//    wcex.cbWndExtra = 0;
++//    wcex.hInstance = m_hInstance;
++//    wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
++//    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
++//    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
++//    wcex.lpszMenuName = nullptr;
++//    wcex.lpszClassName = L"TransparentWindowClass";
++//    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
++//
++//    if (!RegisterClassExW(&wcex))
++//    {
++//        std::wcerr << L"Failed to register window class" << std::endl;
++//        return false;
++//    }
++//
++//    int xPos = 0;
++//    int yPos = 0;
++//    int width = 0;
++//    int height = 0;
++//    if (this->m_images) {
++//        Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//        if (pImage)
++//        {
++//            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//            width = pImage->GetWidth();
++//            height = pImage->GetHeight();
++//
++//
++//            xPos = (screenWidth - width) / 2;
++//            yPos = (screenHeight - height) / 2;
++//        }
++//    }
++//
++//    m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
++//        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
++//
++//    if (!m_hWnd)
++//    {
++//        std::wcerr << L"Failed to create window" << std::endl;
++//        return false;
++//    }
++//
++//    std::wcerr << L"Window created successfully" << std::endl;
++//
++//    return m_hWnd != nullptr;
++//}
++//
++//HWND LauncherWindow::GetHWnd() const
++//{
++//    return m_hWnd;
++//}
++//
++//LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    LauncherWindow* pThis = nullptr;
++//
++//    if (message == WM_NCCREATE)
++//    {
++//        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
++//        pThis = (LauncherWindow*)pCreate->lpCreateParams;
++//        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
++//
++//        pThis->m_hWnd = hWnd;
++//        std::wcout << L"WM_NCCREATE called" << std::endl;
++//    }
++//    else
++//    {
++//        pThis = (LauncherWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
++//    }
++//
++//    if (pThis)
++//    {
++//        return pThis->HandleMessage(message, wParam, lParam);
++//    }
++//    else
++//    {
++//        return DefWindowProc(hWnd, message, wParam, lParam);
++//    }
++//}
++//
++//LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    static POINTS ptsBegin;
++//    
++//    int x, y;
++//
++//    switch (message)
++//    {
++//    case WM_LBUTTONDOWN:
++//        ptsBegin = MAKEPOINTS(lParam);
++//        SetCapture(m_hWnd);
++//
++//        x = GET_X_LPARAM(lParam);
++//        y = GET_Y_LPARAM(lParam);
++//
++//        std::cout << "X: " << x << " Y: " << y << std::endl;
++//
++//        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
++//            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
++//            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
++//        }
++//
++//        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
++//			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
++//			PostQuitMessage(0);
++//		}
++//
++//
++//        std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
++//        break;
++//
++//    case WM_MOUSEMOVE:
++//        if (wParam & MK_LBUTTON)
++//        {
++//            POINTS ptsEnd = MAKEPOINTS(lParam);
++//
++//            int dx = ptsEnd.x - ptsBegin.x;
++//            int dy = ptsEnd.y - ptsBegin.y;
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//
++//            MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
++//        }
++//        break;
++//
++//    case WM_LBUTTONUP:
++//        ReleaseCapture();
++//        std::wcout << L"WM_LBUTTONUP called" << std::endl;
++//        break;
++//
++//    case WM_PAINT:
++//    {
++//        std::wcout << L"WM_PAINT called" << std::endl;
++//        PAINTSTRUCT ps;
++//        HDC hdc = BeginPaint(m_hWnd, &ps);
++//
++//        Graphics graphics(hdc);
++//
++//        if (this->m_images) {
++//            Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//            if (pImage)
++//            {
++//                int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//                int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//                RECT rect;
++//                GetWindowRect(m_hWnd, &rect);
++//                int width = pImage->GetWidth();
++//                int height = pImage->GetHeight();
++//
++//
++//                int xPos = (screenWidth - width) / 2;
++//                int yPos = (screenHeight - height) / 2;
++//
++//                MoveWindow(m_hWnd, xPos, yPos, width, height, TRUE);
++//
++//                HDC hdcMem = CreateCompatibleDC(hdc);
++//                HBITMAP hBitmap = CreateCompatibleBitmap(hdc, width, height);
++//                SelectObject(hdcMem, hBitmap);
++//
++//                // Configurar o GDI+ para desenhar com transparência
++//                Graphics graphicsMem(hdcMem);
++//                graphicsMem.DrawImage(pImage, 0, 0, width, height);
++//
++//                // Transferir o conteúdo do DC da memória para o DC da janela usando UpdateLayeredWindow
++//                POINT ptSrc = { 0, 0 };
++//                SIZE sizeWnd = { width, height };
++//                BLENDFUNCTION blend = { 0 };
++//                blend.BlendOp = AC_SRC_OVER;
++//                blend.BlendFlags = 0;
++//                blend.SourceConstantAlpha = 255;
++//                blend.AlphaFormat = AC_SRC_ALPHA;
++//
++//                POINT ptPos = { rect.left, rect.top };
++//                UpdateLayeredWindow(m_hWnd, hdc, &ptPos, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
++//
++//                DeleteObject(hBitmap);
++//                DeleteDC(hdcMem);
++//            }
++//        }
++//
++//        EndPaint(m_hWnd, &ps);
++//    }
++//    break;
++//
++//    case WM_ERASEBKGND:
++//        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
++//        return 1;
++//
++//    case WM_DESTROY:
++//        PostQuitMessage(0);
++//        std::wcerr << L"WM_DESTROY called" << std::endl;
++//        break;
++//
++//    default:
++//        return DefWindowProc(m_hWnd, message, wParam, lParam);
++//    }
++//
++//    return 0;
++//}
++//
+ #include "pch.h"
+-#include "LauncherWindow.h"
+-
+-
+-const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
+-const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
+-
+-#ifndef GET_X_LPARAM
+-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+-#endif
+-
+-#ifndef GET_Y_LPARAM
+-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
+-#endif
+-
+-LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
+-    : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
+-{
+-}
+-
+-bool LauncherWindow::Create()
+-{
+-    WNDCLASSEXW wcex;
+-    wcex.cbSize = sizeof(WNDCLASSEX);
+-
+-    wcex.style = CS_HREDRAW | CS_VREDRAW;
+-    wcex.lpfnWndProc = LauncherWindow::WndProc;
+-    wcex.cbClsExtra = 0;
+-    wcex.cbWndExtra = 0;
+-    wcex.hInstance = m_hInstance;
+-    wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
+-    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+-    wcex.lpszMenuName = nullptr;
+-    wcex.lpszClassName = L"TransparentWindowClass";
+-    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+-
+-    if (!RegisterClassExW(&wcex))
+-    {
+-        std::wcerr << L"Failed to register window class" << std::endl;
+-        return false;
+-    }
+-
+-    int xPos = 0;
+-    int yPos = 0;
+-    int width = 0;
+-    int height = 0;
+-    if (this->m_images) {
+-        Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
+-
+-        if (pImage)
+-        {
+-            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+-            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+-
+-            RECT rect;
+-            GetWindowRect(m_hWnd, &rect);
+-            width = pImage->GetWidth();
+-            height = pImage->GetHeight();
+-
+-
+-            xPos = (screenWidth - width) / 2;
+-            yPos = (screenHeight - height) / 2;
+-        }
+-    }
+-
+-    m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
+-        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
+-
+-    if (!m_hWnd)
+-    {
+-        std::wcerr << L"Failed to create window" << std::endl;
+-        return false;
+-    }
+-
+-    std::wcerr << L"Window created successfully" << std::endl;
+-
+-    return m_hWnd != nullptr;
+-}
+-
+-HWND LauncherWindow::GetHWnd() const
+-{
+-    return m_hWnd;
+-}
+-
+-LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+-{
+-    LauncherWindow* pThis = nullptr;
+-
+-    if (message == WM_NCCREATE)
+-    {
+-        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
+-        pThis = (LauncherWindow*)pCreate->lpCreateParams;
+-        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
+-
+-        pThis->m_hWnd = hWnd;
+-        std::wcout << L"WM_NCCREATE called" << std::endl;
+-    }
+-    else
+-    {
+-        pThis = (LauncherWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+-    }
+-
+-    if (pThis)
+-    {
+-        return pThis->HandleMessage(message, wParam, lParam);
+-    }
+-    else
+-    {
+-        return DefWindowProc(hWnd, message, wParam, lParam);
+-    }
+-}
+-
+-LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+-{
+-    static POINTS ptsBegin;
+-    
+-    int x, y;
+-
+-    switch (message)
+-    {
+-    case WM_LBUTTONDOWN:
+-        ptsBegin = MAKEPOINTS(lParam);
+-        SetCapture(m_hWnd);
+-
+-        x = GET_X_LPARAM(lParam);
+-        y = GET_Y_LPARAM(lParam);
+-
+-        std::cout << "X: " << x << " Y: " << y << std::endl;
+-
+-        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
+-            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
+-            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
+-        }
+-
+-        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
+-			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
+-			PostQuitMessage(0);
+-		}
+-
+-
+-        std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
+-        break;
+-
+-    case WM_MOUSEMOVE:
+-        if (wParam & MK_LBUTTON)
+-        {
+-            POINTS ptsEnd = MAKEPOINTS(lParam);
+-
+-            int dx = ptsEnd.x - ptsBegin.x;
+-            int dy = ptsEnd.y - ptsBegin.y;
+-
+-            RECT rect;
+-            GetWindowRect(m_hWnd, &rect);
+-
+-            MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
+-        }
+-        break;
+-
+-    case WM_LBUTTONUP:
+-        ReleaseCapture();
+-        std::wcout << L"WM_LBUTTONUP called" << std::endl;
+-        break;
+-
+-    case WM_PAINT:
+-    {
+-        std::wcout << L"WM_PAINT called" << std::endl;
+-        PAINTSTRUCT ps;
+-        HDC hdc = BeginPaint(m_hWnd, &ps);
+-
+-        Graphics graphics(hdc);
+-
+-        if (this->m_images) {
+-            Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
+-
+-            if (pImage)
+-            {
+-                int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+-                int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+-
+-                RECT rect;
+-                GetWindowRect(m_hWnd, &rect);
+-                int width = pImage->GetWidth();
+-                int height = pImage->GetHeight();
+-
+-
+-                int xPos = (screenWidth - width) / 2;
+-                int yPos = (screenHeight - height) / 2;
+-
+-                MoveWindow(m_hWnd, xPos, yPos, width, height, TRUE);
+-
+-                HDC hdcMem = CreateCompatibleDC(hdc);
+-                HBITMAP hBitmap = CreateCompatibleBitmap(hdc, width, height);
+-                SelectObject(hdcMem, hBitmap);
+-
+-                // Configurar o GDI+ para desenhar com transparência
+-                Graphics graphicsMem(hdcMem);
+-                graphicsMem.DrawImage(pImage, 0, 0, width, height);
+-
+-                // Transferir o conteúdo do DC da memória para o DC da janela usando UpdateLayeredWindow
+-                POINT ptSrc = { 0, 0 };
+-                SIZE sizeWnd = { width, height };
+-                BLENDFUNCTION blend = { 0 };
+-                blend.BlendOp = AC_SRC_OVER;
+-                blend.BlendFlags = 0;
+-                blend.SourceConstantAlpha = 255;
+-                blend.AlphaFormat = AC_SRC_ALPHA;
+-
+-                POINT ptPos = { rect.left, rect.top };
+-                UpdateLayeredWindow(m_hWnd, hdc, &ptPos, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+-
+-                DeleteObject(hBitmap);
+-                DeleteDC(hdcMem);
+-            }
+-        }
+-
+-        EndPaint(m_hWnd, &ps);
+-    }
+-    break;
+-
+-    case WM_ERASEBKGND:
+-        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
+-        return 1;
+-
+-    case WM_DESTROY:
+-        PostQuitMessage(0);
+-        std::wcerr << L"WM_DESTROY called" << std::endl;
+-        break;
+-
+-    default:
+-        return DefWindowProc(m_hWnd, message, wParam, lParam);
+-    }
+-
+-    return 0;
+-}
+-
++//#include "LauncherWindow.h"
++//
++//
++//const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
++//const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
++//
++//
++//
++//LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
++//    : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
++//{
++//}
++//
++//bool LauncherWindow::Create()
++//{
++//    WNDCLASSEXW wcex;
++//    wcex.cbSize = sizeof(WNDCLASSEX);
++//
++//    wcex.style = CS_HREDRAW | CS_VREDRAW;
++//    wcex.lpfnWndProc = LauncherWindow::WndProc;
++//    wcex.cbClsExtra = 0;
++//    wcex.cbWndExtra = 0;
++//    wcex.hInstance = m_hInstance;
++//    wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
++//    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
++//    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
++//    wcex.lpszMenuName = nullptr;
++//    wcex.lpszClassName = L"TransparentWindowClass";
++//    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
++//
++//    if (!RegisterClassExW(&wcex))
++//    {
++//        std::wcerr << L"Failed to register window class" << std::endl;
++//        return false;
++//    }
++//
++//    int xPos = 0;
++//    int yPos = 0;
++//    int width = 0;
++//    int height = 0;
++//    if (this->m_images) {
++//        Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//        if (pImage)
++//        {
++//            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//            width = pImage->GetWidth();
++//            height = pImage->GetHeight();
++//
++//
++//            xPos = (screenWidth - width) / 2;
++//            yPos = (screenHeight - height) / 2;
++//        }
++//    }
++//
++//    m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
++//        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
++//
++//    if (!m_hWnd)
++//    {
++//        std::wcerr << L"Failed to create window" << std::endl;
++//        return false;
++//    }
++//
++//    std::wcerr << L"Window created successfully" << std::endl;
++//
++//    return m_hWnd != nullptr;
++//}
++//
++//HWND LauncherWindow::GetHWnd() const
++//{
++//    return m_hWnd;
++//}
++//
++//LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    LauncherWindow* pThis = nullptr;
++//
++//    if (message == WM_NCCREATE)
++//    {
++//        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
++//        pThis = (LauncherWindow*)pCreate->lpCreateParams;
++//        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
++//
++//        pThis->m_hWnd = hWnd;
++//        std::wcout << L"WM_NCCREATE called" << std::endl;
++//    }
++//    else
++//    {
++//        pThis = (LauncherWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
++//    }
++//
++//    if (pThis)
++//    {
++//        return pThis->HandleMessage(message, wParam, lParam);
++//    }
++//    else
++//    {
++//        return DefWindowProc(hWnd, message, wParam, lParam);
++//    }
++//}
++//
++//LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    static POINTS ptsBegin;
++//    
++//    int x, y;
++//
++//    switch (message)
++//    {
++//    case WM_LBUTTONDOWN:
++//        ptsBegin = MAKEPOINTS(lParam);
++//        SetCapture(m_hWnd);
++//
++//        x = GET_X_LPARAM(lParam);
++//        y = GET_Y_LPARAM(lParam);
++//
++//        std::cout << "X: " << x << " Y: " << y << std::endl;
++//
++//        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
++//            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
++//            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
++//        }
++//
++//        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
++//			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
++//			PostQuitMessage(0);
++//		}
++//
++//
++//        std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
++//        break;
++//
++//    case WM_MOUSEMOVE:
++//        if (wParam & MK_LBUTTON)
++//        {
++//            POINTS ptsEnd = MAKEPOINTS(lParam);
++//
++//            int dx = ptsEnd.x - ptsBegin.x;
++//            int dy = ptsEnd.y - ptsBegin.y;
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//
++//            MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
++//        }
++//        break;
++//
++//    case WM_LBUTTONUP:
++//        ReleaseCapture();
++//        std::wcout << L"WM_LBUTTONUP called" << std::endl;
++//        break;
++//
++//    case WM_PAINT:
++//    {
++//        std::wcout << L"WM_PAINT called" << std::endl;
++//        PAINTSTRUCT ps;
++//        HDC hdc = BeginPaint(m_hWnd, &ps);
++//
++//        Graphics graphics(hdc);
++//
++//        if (this->m_images) {
++//            Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//            if (pImage)
++//            {
++//                int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//                int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//                RECT rect;
++//                GetWindowRect(m_hWnd, &rect);
++//                int width = pImage->GetWidth();
++//                int height = pImage->GetHeight();
++//
++//
++//                int xPos = (screenWidth - width) / 2;
++//                int yPos = (screenHeight - height) / 2;
++//
++//                MoveWindow(m_hWnd, xPos, yPos, width, height, TRUE);
++//
++//                HDC hdcMem = CreateCompatibleDC(hdc);
++//                HBITMAP hBitmap = CreateCompatibleBitmap(hdc, width, height);
++//                SelectObject(hdcMem, hBitmap);
++//
++//                // Configurar o GDI+ para desenhar com transparência
++//                Graphics graphicsMem(hdcMem);
++//                graphicsMem.DrawImage(pImage, 0, 0, width, height);
++//
++//                // Transferir o conteúdo do DC da memória para o DC da janela usando UpdateLayeredWindow
++//                POINT ptSrc = { 0, 0 };
++//                SIZE sizeWnd = { width, height };
++//                BLENDFUNCTION blend = { 0 };
++//                blend.BlendOp = AC_SRC_OVER;
++//                blend.BlendFlags = 0;
++//                blend.SourceConstantAlpha = 255;
++//                blend.AlphaFormat = AC_SRC_ALPHA;
++//
++//                POINT ptPos = { rect.left, rect.top };
++//                UpdateLayeredWindow(m_hWnd, hdc, &ptPos, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
++//
++//                DeleteObject(hBitmap);
++//                DeleteDC(hdcMem);
++//            }
++//        }
++//
++//        EndPaint(m_hWnd, &ps);
++//    }
++//    break;
++//
++//    case WM_ERASEBKGND:
++//        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
++//        return 1;
++//
++//    case WM_DESTROY:
++//        PostQuitMessage(0);
++//        std::wcerr << L"WM_DESTROY called" << std::endl;
++//        break;
++//
++//    default:
++//        return DefWindowProc(m_hWnd, message, wParam, lParam);
++//    }
++//
++//    return 0;
++//}
++//
++//#include "pch.h"
++//#include "LauncherWindow.h"
++//
++//
++//const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
++//const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
++//
++//#ifndef GET_X_LPARAM
++//#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
++//#endif
++//
++//#ifndef GET_Y_LPARAM
++//#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
++//#endif
++//
++//LauncherWindow::LauncherWindow(HINSTANCE hInstance, CImages* cImages)
++//    : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages)
++//{
++//}
++//
++//bool LauncherWindow::Create()
++//{
++//    WNDCLASSEXW wcex;
++//    wcex.cbSize = sizeof(WNDCLASSEX);
++//
++//    wcex.style = CS_HREDRAW | CS_VREDRAW;
++//    wcex.lpfnWndProc = LauncherWindow::WndProc;
++//    wcex.cbClsExtra = 0;
++//    wcex.cbWndExtra = 0;
++//    wcex.hInstance = m_hInstance;
++//    wcex.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
++//    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
++//    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
++//    wcex.lpszMenuName = nullptr;
++//    wcex.lpszClassName = L"TransparentWindowClass";
++//    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
++//
++//    if (!RegisterClassExW(&wcex))
++//    {
++//        std::wcerr << L"Failed to register window class" << std::endl;
++//        return false;
++//    }
++//
++//    int xPos = 0;
++//    int yPos = 0;
++//    int width = 0;
++//    int height = 0;
++//    if (this->m_images) {
++//        Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//        if (pImage)
++//        {
++//            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//            width = pImage->GetWidth();
++//            height = pImage->GetHeight();
++//
++//
++//            xPos = (screenWidth - width) / 2;
++//            yPos = (screenHeight - height) / 2;
++//        }
++//    }
++//
++//    m_hWnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"TransparentWindowClass", nullptr, WS_POPUP,
++//        xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
++//
++//    if (!m_hWnd)
++//    {
++//        std::wcerr << L"Failed to create window" << std::endl;
++//        return false;
++//    }
++//
++//    std::wcerr << L"Window created successfully" << std::endl;
++//
++//    return m_hWnd != nullptr;
++//}
++//
++//HWND LauncherWindow::GetHWnd() const
++//{
++//    return m_hWnd;
++//}
++//
++//LRESULT CALLBACK LauncherWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    LauncherWindow* pThis = nullptr;
++//
++//    if (message == WM_NCCREATE)
++//    {
++//        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
++//        pThis = (LauncherWindow*)pCreate->lpCreateParams;
++//        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
++//
++//        pThis->m_hWnd = hWnd;
++//        std::wcout << L"WM_NCCREATE called" << std::endl;
++//    }
++//    else
++//    {
++//        pThis = (LauncherWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
++//    }
++//
++//    if (pThis)
++//    {
++//        return pThis->HandleMessage(message, wParam, lParam);
++//    }
++//    else
++//    {
++//        return DefWindowProc(hWnd, message, wParam, lParam);
++//    }
++//}
++//
++//LRESULT LauncherWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
++//{
++//    static POINTS ptsBegin;
++//    
++//    int x, y;
++//
++//    switch (message)
++//    {
++//    case WM_LBUTTONDOWN:
++//        ptsBegin = MAKEPOINTS(lParam);
++//        SetCapture(m_hWnd);
++//
++//        x = GET_X_LPARAM(lParam);
++//        y = GET_Y_LPARAM(lParam);
++//
++//        std::cout << "X: " << x << " Y: " << y << std::endl;
++//
++//        if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
++//            y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
++//            ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
++//        }
++//
++//        if(x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
++//			y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
++//			PostQuitMessage(0);
++//		}
++//
++//
++//        std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
++//        break;
++//
++//    case WM_MOUSEMOVE:
++//        if (wParam & MK_LBUTTON)
++//        {
++//            POINTS ptsEnd = MAKEPOINTS(lParam);
++//
++//            int dx = ptsEnd.x - ptsBegin.x;
++//            int dy = ptsEnd.y - ptsBegin.y;
++//
++//            RECT rect;
++//            GetWindowRect(m_hWnd, &rect);
++//
++//            MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
++//        }
++//        break;
++//
++//    case WM_LBUTTONUP:
++//        ReleaseCapture();
++//        std::wcout << L"WM_LBUTTONUP called" << std::endl;
++//        break;
++//
++//    case WM_PAINT:
++//    {
++//        std::wcout << L"WM_PAINT called" << std::endl;
++//        PAINTSTRUCT ps;
++//        HDC hdc = BeginPaint(m_hWnd, &ps);
++//
++//        Graphics graphics(hdc);
++//
++//        if (this->m_images) {
++//            Image* pImage = this->m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++//
++//            if (pImage)
++//            {
++//                int screenWidth = GetSystemMetrics(SM_CXSCREEN);
++//                int screenHeight = GetSystemMetrics(SM_CYSCREEN);
++//
++//                RECT rect;
++//                GetWindowRect(m_hWnd, &rect);
++//                int width = pImage->GetWidth();
++//                int height = pImage->GetHeight();
++//
++//
++//                int xPos = (screenWidth - width) / 2;
++//                int yPos = (screenHeight - height) / 2;
++//
++//                MoveWindow(m_hWnd, xPos, yPos, width, height, TRUE);
++//
++//                HDC hdcMem = CreateCompatibleDC(hdc);
++//                HBITMAP hBitmap = CreateCompatibleBitmap(hdc, width, height);
++//                SelectObject(hdcMem, hBitmap);
++//
++//                // Configurar o GDI+ para desenhar com transparência
++//                Graphics graphicsMem(hdcMem);
++//                graphicsMem.DrawImage(pImage, 0, 0, width, height);
++//
++//                // Transferir o conteúdo do DC da memória para o DC da janela usando UpdateLayeredWindow
++//                POINT ptSrc = { 0, 0 };
++//                SIZE sizeWnd = { width, height };
++//                BLENDFUNCTION blend = { 0 };
++//                blend.BlendOp = AC_SRC_OVER;
++//                blend.BlendFlags = 0;
++//                blend.SourceConstantAlpha = 255;
++//                blend.AlphaFormat = AC_SRC_ALPHA;
++//
++//                POINT ptPos = { rect.left, rect.top };
++//                UpdateLayeredWindow(m_hWnd, hdc, &ptPos, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
++//
++//                DeleteObject(hBitmap);
++//                DeleteDC(hdcMem);
++//            }
++//        }
++//
++//        EndPaint(m_hWnd, &ps);
++//    }
++//    break;
++//
++//    case WM_ERASEBKGND:
++//        //InvalidateRect(m_hWnd, &BUTTON_MINIMIZE_AREA, TRUE);
++//        return 1;
++//
++//    case WM_DESTROY:
++//        PostQuitMessage(0);
++//        std::wcerr << L"WM_DESTROY called" << std::endl;
++//        break;
++//
++//    default:
++//        return DefWindowProc(m_hWnd, message, wParam, lParam);
++//    }
++//
++//    return 0;
++//}
++//
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.h b/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.h
+index 44cf1e7..f0acf56 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.h
++++ b/MuOnlinelauncher/MuOnlinelauncher/LauncherWindow.h
+@@ -1,23 +1,23 @@
+-#ifndef LAUNCHERWINDOW_H
+-#define LAUNCHERWINDOW_H
+-
+-#include "framework.h"
+-#include "Images.h"
+-
+-class LauncherWindow
+-{
+-public:
+-    LauncherWindow(HINSTANCE hInstance, CImages* cImages);
+-    bool Create();
+-    HWND GetHWnd() const;
+-
+-private:
+-    static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+-    LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
+-
+-    HINSTANCE m_hInstance;
+-    HWND m_hWnd;
+-    CImages* m_images;
+-};
+-
+-#endif // LAUNCHERWINDOW_H
+\ No newline at end of file
++//#ifndef LAUNCHERWINDOW_H
++//#define LAUNCHERWINDOW_H
++//
++//#include "framework.h"
++//#include "Images.h"
++//
++//class LauncherWindow
++//{
++//public:
++//  LauncherWindow(HINSTANCE hInstance, CImages* cImages);
++//  bool Create();
++//  HWND GetHWnd() const;
++//
++//private:
++//  static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
++//  LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
++//
++//  HINSTANCE m_hInstance;
++//  HWND m_hWnd;
++//  CImages* m_images;
++//};
++//
++//#endif // LAUNCHERWINDOW_H
+\ No newline at end of file
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MainWindow.cpp b/MuOnlinelauncher/MuOnlinelauncher/MainWindow.cpp
+new file mode 100644
+index 0000000..06a2f97
+--- /dev/null
++++ b/MuOnlinelauncher/MuOnlinelauncher/MainWindow.cpp
+@@ -0,0 +1,201 @@
++#include "pch.h"
++#include "MainWindow.h"
++#include <tchar.h>
++#include "defines.h"
++#include "pch.h"
++#include "MainWindow.h"
++#include <tchar.h>
++#include "defines.h"
++
++
++#define IDC_COMBOBOX 101
++
++const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
++const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
++
++MainWindow::MainWindow(HINSTANCE hInstance, CImages* cImages)
++  : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages), m_backgroundImage(nullptr) {
++}
++
++bool MainWindow::Create() {
++  WNDCLASSEX wc = {
++      sizeof(WNDCLASSEX),
++      CS_HREDRAW | CS_VREDRAW,
++      MainWindow::WndProc,
++      0,
++      0,
++      m_hInstance,
++      LoadIcon(nullptr, IDI_APPLICATION),
++      LoadCursor(nullptr, IDC_ARROW),
++      nullptr,
++      nullptr,
++      _T("MainWindowClass"),
++      LoadIcon(nullptr, IDI_APPLICATION)
++  };
++
++  if (!RegisterClassEx(&wc)) {
++    MessageBox(nullptr, _T("Failed to register window class"), _T("Error"), MB_OK);
++    return false;
++  }
++
++  m_backgroundImage = m_images->getImage(LAUNCHER_IMAGE_BACKGROUND);
++  int width = 0;
++  int height = 0;
++  if (m_backgroundImage) {
++    width = m_backgroundImage->GetWidth();
++    height = m_backgroundImage->GetHeight();
++  }
++
++  int xPos = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
++  int yPos = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
++
++  m_hWnd = CreateWindowEx(WS_EX_LAYERED | WS_EX_TOPMOST, _T("MainWindowClass"), nullptr, WS_POPUP,
++    xPos, yPos, width, height, nullptr, nullptr, m_hInstance, this);
++
++  if (!m_hWnd) {
++    MessageBox(nullptr, _T("Failed to create window"), _T("Error"), MB_OK);
++    return false;
++  }
++
++  // Configurar a janela como transparente
++  UpdateLayeredWindow();
++
++  ShowWindow(m_hWnd, SW_SHOW);
++  UpdateWindow(m_hWnd);
++  return true;
++}
++
++HWND MainWindow::GetHWnd() const {
++  return m_hWnd;
++}
++
++void MainWindow::DrawBackground(Graphics& graphics) {
++  if (m_backgroundImage) {
++    graphics.DrawImage(m_backgroundImage, 0, 0, m_backgroundImage->GetWidth(), m_backgroundImage->GetHeight());
++  }
++}
++
++void MainWindow::UpdateLayeredWindow() {
++  if (!m_backgroundImage) return;
++
++  HDC hdcScreen = GetDC(NULL);
++  HDC hdcMem = CreateCompatibleDC(hdcScreen);
++
++  int width = m_backgroundImage->GetWidth();
++  int height = m_backgroundImage->GetHeight();
++
++  HBITMAP hBitmap = CreateCompatibleBitmap(hdcScreen, width, height);
++  SelectObject(hdcMem, hBitmap);
++
++  Graphics graphics(hdcMem);
++  DrawBackground(graphics);
++
++  POINT ptWinPos = { 0, 0 };
++  SIZE sizeWin = { width, height };
++  POINT ptSrc = { 0, 0 };
++  BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
++
++  ::UpdateLayeredWindow(m_hWnd, hdcScreen, NULL, &sizeWin, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
++
++  DeleteObject(hBitmap);
++  DeleteDC(hdcMem);
++  ReleaseDC(NULL, hdcScreen);
++}
++
++LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
++  MainWindow* pThis = nullptr;
++
++  if (message == WM_NCCREATE) {
++    CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
++    pThis = (MainWindow*)pCreate->lpCreateParams;
++    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pThis);
++    pThis->m_hWnd = hWnd;
++  }
++  else {
++    pThis = (MainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
++  }
++
++  if (pThis) {
++    return pThis->HandleMessage(message, wParam, lParam);
++  }
++  else {
++    return DefWindowProc(hWnd, message, wParam, lParam);
++  }
++}
++
++LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
++  static POINTS ptsBegin;
++
++  int x, y;
++  switch (message) {
++  case WM_PAINT: {
++    PAINTSTRUCT ps;
++    HDC hdc = BeginPaint(m_hWnd, &ps);
++    Graphics graphics(hdc);
++    DrawBackground(graphics);
++    EndPaint(m_hWnd, &ps);
++    break;
++  }
++  case WM_LBUTTONDOWN:
++    ptsBegin = MAKEPOINTS(lParam);
++    SetCapture(m_hWnd);
++
++    x = GET_X_LPARAM(lParam);
++    y = GET_Y_LPARAM(lParam);
++
++    std::cout << "X: " << x << " Y: " << y << std::endl;
++
++    if (x >= BUTTON_MINIMIZE_AREA.left && x <= BUTTON_MINIMIZE_AREA.right &&
++      y >= BUTTON_MINIMIZE_AREA.top && y <= BUTTON_MINIMIZE_AREA.bottom) {
++      ShowWindow(m_hWnd, SW_MINIMIZE); // Minimize a janela
++    }
++
++    if (x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
++      y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
++      PostQuitMessage(0);
++    }
++
++    std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
++    break;
++
++  case WM_MOUSEMOVE:
++    if (wParam & MK_LBUTTON) {
++      POINTS ptsEnd = MAKEPOINTS(lParam);
++
++      int dx = ptsEnd.x - ptsBegin.x;
++      int dy = ptsEnd.y - ptsBegin.y;
++
++      RECT rect;
++      GetWindowRect(m_hWnd, &rect);
++
++      MoveWindow(m_hWnd, rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
++      InvalidateRect(m_hWnd, NULL, TRUE);
++    }
++    break;
++
++  case WM_SYSCOMMAND:
++    if ((wParam & 0xFFF0) == SC_MINIMIZE || (wParam & 0xFFF0) == SC_RESTORE) {
++      UpdateLayeredWindow();
++    }
++    return DefWindowProc(m_hWnd, message, wParam, lParam);
++
++  case WM_WINDOWPOSCHANGED:
++    UpdateLayeredWindow();
++    return DefWindowProc(m_hWnd, message, wParam, lParam);
++
++  case WM_LBUTTONUP:
++    ReleaseCapture();
++    std::wcout << L"WM_LBUTTONUP called" << std::endl;
++    break;
++
++  case WM_DESTROY:
++    PostQuitMessage(0);
++    break;
++
++  default:
++    return DefWindowProc(m_hWnd, message, wParam, lParam);
++  }
++
++  return 0;
++}
++
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MainWindow.h b/MuOnlinelauncher/MuOnlinelauncher/MainWindow.h
+new file mode 100644
+index 0000000..3e08c35
+--- /dev/null
++++ b/MuOnlinelauncher/MuOnlinelauncher/MainWindow.h
+@@ -0,0 +1,23 @@
++#pragma once
++
++#include "Images.h"
++
++class MainWindow {
++public:
++    MainWindow(HINSTANCE hInstance, CImages* cImages);
++    bool Create();
++    HWND GetHWnd() const;
++
++    void DrawBackground(Graphics& graphics);
++
++private:
++    static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
++    LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
++
++    void UpdateLayeredWindow();
++
++    HINSTANCE m_hInstance;
++    HWND m_hWnd;
++    CImages* m_images;
++    Image* m_backgroundImage;
++};
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.aps b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.aps
+index 5e34be3..3e5182a 100644
+Binary files a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.aps and b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.aps differ
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.cpp b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.cpp
+index 7949878..150ea33 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.cpp
++++ b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.cpp
+@@ -1,68 +1,77 @@
+ #include "pch.h"
+ #include "MuOnlinelauncher.h"
+-#include "LauncherWindow.h"
+-#include "defines.h"
++//#include "LauncherWindow.h"
++#include "defines.h""
++#include "MainWindow.h"
+ 
+ ULONG_PTR gdiplusToken;
+ 
+ void InitializeConsole()
+ {
+-    AllocConsole();
+-    FILE* file;
+-    freopen_s(&file, "CONOUT$", "w", stdout);
+-    freopen_s(&file, "CONOUT$", "w", stderr);
+-    freopen_s(&file, "CONIN$", "r", stdin);
++  AllocConsole();
++  FILE* file;
++  freopen_s(&file, "CONOUT$", "w", stdout);
++  freopen_s(&file, "CONOUT$", "w", stderr);
++  freopen_s(&file, "CONIN$", "r", stdin);
+ }
+ 
+ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+-    _In_opt_ HINSTANCE hPrevInstance,
+-    _In_ LPWSTR    lpCmdLine,
+-    _In_ int       nCmdShow)
++  _In_opt_ HINSTANCE hPrevInstance,
++  _In_ LPWSTR    lpCmdLine,
++  _In_ int       nCmdShow)
+ {
+ 
+ 
+-    if (SHOW_CONSOLE)
+-        InitializeConsole();
++  if (SHOW_CONSOLE)
++    InitializeConsole();
+ 
+ 
+-    InitializeGDIPlus();
++  InitializeGDIPlus();
+ 
+-    std::unique_ptr<CImages> cImages = std::make_unique<CImages>(hInstance);
+-    cImages->loadImages();
+ 
+-    LauncherWindow launcherWindow(hInstance, cImages.get());
+-    if (!launcherWindow.Create())
+-    {
+-        ShutdownGDIPlus();
+-        return FALSE;
+-    }
+ 
+-    // Mostre a janela e atualize
+-    ShowWindow(launcherWindow.GetHWnd(), nCmdShow);
+-    UpdateWindow(launcherWindow.GetHWnd());
++  std::unique_ptr<CImages> cImages = std::make_unique<CImages>(hInstance);
++  cImages->loadImages();
+ 
+-    // Forçar a repintura da janela
+-    InvalidateRect(launcherWindow.GetHWnd(), NULL, TRUE);
+-    UpdateWindow(launcherWindow.GetHWnd());
++  MainWindow mainWindow(hInstance, cImages.get());
++  if (!mainWindow.Create()) {
++    return -1;
++  }
+ 
+-    MSG msg;
+-    while (GetMessage(&msg, nullptr, 0, 0))
+-    {
+-        TranslateMessage(&msg);
+-        DispatchMessage(&msg);
+-    }
+ 
+-    ShutdownGDIPlus();
+-    return (int)msg.wParam;
++  //LauncherWindow launcherWindow(hInstance, cImages.get());
++  //if (!launcherWindow.Create())
++  //{
++  //    ShutdownGDIPlus();
++  //    return FALSE;
++  //}
++
++  //// Mostre a janela e atualize
++  //ShowWindow(launcherWindow.GetHWnd(), nCmdShow);
++  //UpdateWindow(launcherWindow.GetHWnd());
++
++  //// Forçar a repintura da janela
++  //InvalidateRect(launcherWindow.GetHWnd(), NULL, TRUE);
++  //UpdateWindow(launcherWindow.GetHWnd());
++
++  MSG msg;
++  while (GetMessage(&msg, nullptr, 0, 0))
++  {
++    TranslateMessage(&msg);
++    DispatchMessage(&msg);
++  }
++
++  ShutdownGDIPlus();
++  return (int)msg.wParam;
+ }
+ 
+ void InitializeGDIPlus()
+ {
+-    GdiplusStartupInput gdiplusStartupInput;
+-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
++  GdiplusStartupInput gdiplusStartupInput;
++  GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+ }
+ 
+ void ShutdownGDIPlus()
+ {
+-    GdiplusShutdown(gdiplusToken);
++  GdiplusShutdown(gdiplusToken);
+ }
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj
+index e6fc6e6..49ddff5 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj
++++ b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj
+@@ -174,7 +174,7 @@
+     <ClInclude Include="framework.h" />
+     <ClInclude Include="ICryptography.h" />
+     <ClInclude Include="Images.h" />
+-    <ClInclude Include="LauncherWindow.h" />
++    <ClInclude Include="MainWindow.h" />
+     <ClInclude Include="MuOnlinelauncher.h" />
+     <ClInclude Include="pch.h" />
+     <ClInclude Include="Resource.h" />
+@@ -183,7 +183,7 @@
+   <ItemGroup>
+     <ClCompile Include="AESCryptography.cpp" />
+     <ClCompile Include="Images.cpp" />
+-    <ClCompile Include="LauncherWindow.cpp" />
++    <ClCompile Include="MainWindow.cpp" />
+     <ClCompile Include="MuOnlinelauncher.cpp" />
+     <ClCompile Include="pch.cpp">
+       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj.filters b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj.filters
+index 44de289..250a41a 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj.filters
++++ b/MuOnlinelauncher/MuOnlinelauncher/MuOnlinelauncher.vcxproj.filters
+@@ -22,15 +22,15 @@
+     <Filter Include="Source Files\pch">
+       <UniqueIdentifier>{2a49ec79-c8d8-480c-a415-28a0b3261737}</UniqueIdentifier>
+     </Filter>
+-    <Filter Include="Source Files\LaucherWindow">
+-      <UniqueIdentifier>{5a3198cb-8722-4f0d-9218-40c144e8d33e}</UniqueIdentifier>
+-    </Filter>
+     <Filter Include="Source Files\Interface">
+       <UniqueIdentifier>{951ba25f-f559-49e8-9785-3b2eabbd006d}</UniqueIdentifier>
+     </Filter>
+     <Filter Include="Source Files\Cryptography">
+       <UniqueIdentifier>{23e3397e-d41c-4d61-bfdd-a9db5a68ff8e}</UniqueIdentifier>
+     </Filter>
++    <Filter Include="Source Files\MainWindow">
++      <UniqueIdentifier>{834f81f1-a54c-4763-9b03-4d98780f0f6d}</UniqueIdentifier>
++    </Filter>
+   </ItemGroup>
+   <ItemGroup>
+     <ClInclude Include="MuOnlinelauncher.h">
+@@ -51,9 +51,6 @@
+     <ClInclude Include="defines.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+-    <ClInclude Include="LauncherWindow.h">
+-      <Filter>Source Files\LaucherWindow</Filter>
+-    </ClInclude>
+     <ClInclude Include="Images.h">
+       <Filter>Source Files\Interface</Filter>
+     </ClInclude>
+@@ -63,6 +60,9 @@
+     <ClInclude Include="AESCryptography.h">
+       <Filter>Source Files\Cryptography</Filter>
+     </ClInclude>
++    <ClInclude Include="MainWindow.h">
++      <Filter>Source Files\MainWindow</Filter>
++    </ClInclude>
+   </ItemGroup>
+   <ItemGroup>
+     <ClCompile Include="MuOnlinelauncher.cpp">
+@@ -71,15 +71,15 @@
+     <ClCompile Include="pch.cpp">
+       <Filter>Source Files\pch</Filter>
+     </ClCompile>
+-    <ClCompile Include="LauncherWindow.cpp">
+-      <Filter>Source Files\LaucherWindow</Filter>
+-    </ClCompile>
+     <ClCompile Include="Images.cpp">
+       <Filter>Source Files\Interface</Filter>
+     </ClCompile>
+     <ClCompile Include="AESCryptography.cpp">
+       <Filter>Source Files\Cryptography</Filter>
+     </ClCompile>
++    <ClCompile Include="MainWindow.cpp">
++      <Filter>Source Files\MainWindow</Filter>
++    </ClCompile>
+   </ItemGroup>
+   <ItemGroup>
+     <ResourceCompile Include="MuOnlinelauncher.rc">
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/defines.h b/MuOnlinelauncher/MuOnlinelauncher/defines.h
+index d582c42..3ae264a 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/defines.h
++++ b/MuOnlinelauncher/MuOnlinelauncher/defines.h
+@@ -1,3 +1,12 @@
+ #pragma once
+ #define MAX_LOADSTRING 100
+-#define SHOW_CONSOLE 1
+\ No newline at end of file
++#define SHOW_CONSOLE 0
++
++
++#ifndef GET_X_LPARAM
++#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
++#endif
++
++#ifndef GET_Y_LPARAM
++#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
++#endif
+\ No newline at end of file
+diff --git a/MuOnlinelauncher/MuOnlinelauncher/resource.h b/MuOnlinelauncher/MuOnlinelauncher/resource.h
+index f27dd29..f66c397 100644
+--- a/MuOnlinelauncher/MuOnlinelauncher/resource.h
++++ b/MuOnlinelauncher/MuOnlinelauncher/resource.h
+@@ -19,7 +19,7 @@
+ #ifdef APSTUDIO_INVOKED
+ #ifndef APSTUDIO_READONLY_SYMBOLS
+ #define _APS_NO_MFC                     1
+-#define _APS_NEXT_RESOURCE_VALUE        133
++#define _APS_NEXT_RESOURCE_VALUE        134
+ #define _APS_NEXT_COMMAND_VALUE         32771
+ #define _APS_NEXT_CONTROL_VALUE         1000
+ #define _APS_NEXT_SYMED_VALUE           110
+diff --git a/MuOnlinelauncher/vcpkg.json b/MuOnlinelauncher/vcpkg.json
+index c241854..c2d1035 100644
+--- a/MuOnlinelauncher/vcpkg.json
++++ b/MuOnlinelauncher/vcpkg.json
+@@ -1,3 +1,8 @@
+ {
+-  "dependencies": ["cryptopp", "fmt"]
++  "dependencies": [
++    "cryptopp",
++    "fmt",
++    "zlib",
++    "libpng"
++  ]
+ }

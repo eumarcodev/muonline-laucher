@@ -22,14 +22,14 @@
     <Filter Include="Source Files\pch">
       <UniqueIdentifier>{2a49ec79-c8d8-480c-a415-28a0b3261737}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\LaucherWindow">
-      <UniqueIdentifier>{5a3198cb-8722-4f0d-9218-40c144e8d33e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Interface">
       <UniqueIdentifier>{951ba25f-f559-49e8-9785-3b2eabbd006d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Cryptography">
       <UniqueIdentifier>{23e3397e-d41c-4d61-bfdd-a9db5a68ff8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MainWindow">
+      <UniqueIdentifier>{834f81f1-a54c-4763-9b03-4d98780f0f6d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,9 +51,6 @@
     <ClInclude Include="defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LauncherWindow.h">
-      <Filter>Source Files\LaucherWindow</Filter>
-    </ClInclude>
     <ClInclude Include="Images.h">
       <Filter>Source Files\Interface</Filter>
     </ClInclude>
@@ -63,6 +60,9 @@
     <ClInclude Include="AESCryptography.h">
       <Filter>Source Files\Cryptography</Filter>
     </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>Source Files\MainWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MuOnlinelauncher.cpp">
@@ -71,14 +71,14 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files\pch</Filter>
     </ClCompile>
-    <ClCompile Include="LauncherWindow.cpp">
-      <Filter>Source Files\LaucherWindow</Filter>
-    </ClCompile>
     <ClCompile Include="Images.cpp">
       <Filter>Source Files\Interface</Filter>
     </ClCompile>
     <ClCompile Include="AESCryptography.cpp">
       <Filter>Source Files\Cryptography</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Source Files\MainWindow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
