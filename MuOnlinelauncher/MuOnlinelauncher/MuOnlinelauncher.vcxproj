@@ -193,8 +193,8 @@
     <ResourceCompile Include="MuOnlinelauncher.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\build\x64\Debug\bg_launcher.png" />
-    <Image Include="MuOnlinelauncher.ico" />
+    <Image Include="..\Data\Interface\Laucher\bg_launcher.png" />
+    <Image Include="pz-icon.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
