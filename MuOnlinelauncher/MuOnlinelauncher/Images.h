@@ -9,6 +9,7 @@ using namespace Gdiplus;
 
 enum LAUNCHER_IMAGES {
     LAUNCHER_IMAGE_BACKGROUND,
+    SETTINGS_IMAGE_BACKGROUND,
 };
 
 class CImages

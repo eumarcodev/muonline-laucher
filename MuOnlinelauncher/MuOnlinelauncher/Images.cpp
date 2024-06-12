@@ -14,6 +14,7 @@ void CImages::loadImages()
 {
 
     loadImageFromResource(LAUNCHER_IMAGE_BACKGROUND, IDB_LAUNCHER_BG);
+    loadImageFromResource(SETTINGS_IMAGE_BACKGROUND, IDB_SETTINGS_BG);
 }
 
 void CImages::loadImageFromResource(LAUNCHER_IMAGES id, int resourceID)
