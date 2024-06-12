@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Images.h"
+#include "SettingsWindow.h"
 
 class MainWindow {
 public:
@@ -20,4 +21,5 @@ private:
     HWND m_hWnd;
     CImages* m_images;
     Image* m_backgroundImage;
+    SettingsWindow m_settingsWindow;
 };

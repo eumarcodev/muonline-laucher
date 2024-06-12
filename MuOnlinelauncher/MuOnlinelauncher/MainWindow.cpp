@@ -1,10 +1,5 @@
 #include "pch.h"
 #include "MainWindow.h"
-#include <tchar.h>
-#include "defines.h"
-#include "pch.h"
-#include "MainWindow.h"
-#include <tchar.h>
 #include "defines.h"
 
 
@@ -12,9 +7,10 @@
 
 const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
 const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
+const RECT BUTTON_SETTINGS_AREA = { 40, 61, 72, 92 };
 
 MainWindow::MainWindow(HINSTANCE hInstance, CImages* cImages)
-  : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages), m_backgroundImage(nullptr) {
+  : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages), m_backgroundImage(nullptr), m_settingsWindow(hInstance, cImages) {
 }
 
 bool MainWindow::Create() {
@@ -153,6 +149,11 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
     if (x >= BUTTON_CLOSE_AREA.left && x <= BUTTON_CLOSE_AREA.right &&
       y >= BUTTON_CLOSE_AREA.top && y <= BUTTON_CLOSE_AREA.bottom) {
       PostQuitMessage(0);
+    }
+
+    if(x >= BUTTON_SETTINGS_AREA.left && x <= BUTTON_SETTINGS_AREA.right &&
+      y >= BUTTON_SETTINGS_AREA.top && y <= BUTTON_SETTINGS_AREA.bottom) {
+      m_settingsWindow.Create();
     }
 
     std::wcout << L"WM_LBUTTONDOWN called" << std::endl;

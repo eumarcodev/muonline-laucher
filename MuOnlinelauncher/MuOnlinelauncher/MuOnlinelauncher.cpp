@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MuOnlinelauncher.h"
-//#include "LauncherWindow.h"
 #include "defines.h""
 #include "MainWindow.h"
 
@@ -37,22 +36,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   if (!mainWindow.Create()) {
     return -1;
   }
-
-
-  //LauncherWindow launcherWindow(hInstance, cImages.get());
-  //if (!launcherWindow.Create())
-  //{
-  //    ShutdownGDIPlus();
-  //    return FALSE;
-  //}
-
-  //// Mostre a janela e atualize
-  //ShowWindow(launcherWindow.GetHWnd(), nCmdShow);
-  //UpdateWindow(launcherWindow.GetHWnd());
-
-  //// Forçar a repintura da janela
-  //InvalidateRect(launcherWindow.GetHWnd(), NULL, TRUE);
-  //UpdateWindow(launcherWindow.GetHWnd());
 
   MSG msg;
   while (GetMessage(&msg, nullptr, 0, 0))

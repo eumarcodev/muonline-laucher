@@ -31,6 +31,9 @@
     <Filter Include="Source Files\MainWindow">
       <UniqueIdentifier>{834f81f1-a54c-4763-9b03-4d98780f0f6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SettingsWindow">
+      <UniqueIdentifier>{0a9ef79b-e097-466c-b64e-0aa523e0ac39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MuOnlinelauncher.h">
@@ -63,6 +66,9 @@
     <ClInclude Include="MainWindow.h">
       <Filter>Source Files\MainWindow</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsWindow.h">
+      <Filter>Source Files\SettingsWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MuOnlinelauncher.cpp">
@@ -80,6 +86,9 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files\MainWindow</Filter>
     </ClCompile>
+    <ClCompile Include="SettingsWindow.cpp">
+      <Filter>Source Files\SettingsWindow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MuOnlinelauncher.rc">
@@ -94,6 +103,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\Data\Interface\Laucher\bg_launcher.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Data\Interface\Laucher\bg_settings.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
