@@ -10,7 +10,6 @@
 #include <corecrt_wstdio.h>
 #include <io.h>
 #include <iostream>
-#include <iostream>
 #include <Shlwapi.h>
 #include <tuple>
 #include <string>
@@ -18,8 +17,8 @@
 #include <algorithm>
 #include <map>
 #include <tchar.h>
-
-
+#include <stdexcept>
+#include <variant>
 
 using namespace Gdiplus;
 

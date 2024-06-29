@@ -34,6 +34,9 @@
     <Filter Include="Source Files\SettingsWindow">
       <UniqueIdentifier>{0a9ef79b-e097-466c-b64e-0aa523e0ac39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RegEdit">
+      <UniqueIdentifier>{351d1f31-7713-4dbc-8cbf-7cc354375909}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MuOnlinelauncher.h">
@@ -69,6 +72,9 @@
     <ClInclude Include="SettingsWindow.h">
       <Filter>Source Files\SettingsWindow</Filter>
     </ClInclude>
+    <ClInclude Include="RegEdit.h">
+      <Filter>Source Files\RegEdit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MuOnlinelauncher.cpp">
@@ -88,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="SettingsWindow.cpp">
       <Filter>Source Files\SettingsWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="RegEdit.cpp">
+      <Filter>Source Files\RegEdit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

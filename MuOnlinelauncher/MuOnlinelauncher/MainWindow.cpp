@@ -8,6 +8,7 @@
 const RECT BUTTON_MINIMIZE_AREA = { 807, 61, 822, 75 };
 const RECT BUTTON_CLOSE_AREA = { 830, 58, 849, 79 };
 const RECT BUTTON_SETTINGS_AREA = { 40, 61, 72, 92 };
+const RECT BUTTON_PLAY_AREA = { 177, 386, 260, 470 };
 
 MainWindow::MainWindow(HINSTANCE hInstance, CImages* cImages)
   : m_hInstance(hInstance), m_hWnd(nullptr), m_images(cImages), m_backgroundImage(nullptr), m_settingsWindow(hInstance, cImages) {
@@ -154,6 +155,43 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
     if(x >= BUTTON_SETTINGS_AREA.left && x <= BUTTON_SETTINGS_AREA.right &&
       y >= BUTTON_SETTINGS_AREA.top && y <= BUTTON_SETTINGS_AREA.bottom) {
       m_settingsWindow.Create();
+    }
+
+    if (x >= BUTTON_PLAY_AREA.left && x <= BUTTON_PLAY_AREA.right &&
+      y >= BUTTON_PLAY_AREA.top && y <= BUTTON_PLAY_AREA.bottom) {
+      
+      wchar_t buffer[MAX_PATH];
+      GetModuleFileName(NULL, buffer, MAX_PATH);
+      std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
+      std::wstring exePath = std::wstring(buffer).substr(0, pos) + L"\\main.exe";
+
+      //Estruturas necessárias para CreateProcess
+      STARTUPINFO si = { sizeof(si) };
+      PROCESS_INFORMATION pi;
+
+      // Inicialzar as estruturas
+      ZeroMemory(&si, sizeof(si));
+
+      // Criar o processo
+      if (!CreateProcess(
+        exePath.c_str(), // Caminho do executável
+        NULL, // Argumentos
+        NULL, // Atributos de segurança do processo
+        NULL, // Atributos de segurança do thread
+        FALSE, // Não herdar handle
+        0, // Nenhuma flag
+        NULL, // Variaveis de ambiente
+        NULL, // Diretório de trabalho padrão
+        &si, // Informações de inicialização
+        &pi // Informações do processo
+      )) {
+
+        DWORD error = GetLastError();
+
+        MessageBox(NULL, L"Falha ao iniciar o Main.exe", L"Error", MB_OK | MB_ICONERROR);
+      }
+
+      PostQuitMessage(0);
     }
 
     std::wcout << L"WM_LBUTTONDOWN called" << std::endl;
